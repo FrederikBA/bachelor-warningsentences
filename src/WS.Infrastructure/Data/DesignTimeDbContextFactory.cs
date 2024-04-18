@@ -8,7 +8,7 @@ public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<WarningSen
     public WarningSentenceContext CreateDbContext(string[] args)
     {
         //TODO: Move connection string to appsettings.json / configuration file
-        const string connectionString = "Server=localhost;Database=KemiDB;User Id=sa;Password=thisIsSuperStrong1234;TrustServerCertificate=True";
+        const string connectionString = "Server=localhost;Database=ShwWarningSentences;User Id=sa;Password=thisIsSuperStrong1234;TrustServerCertificate=True";
         
         var optionsBuilder = new DbContextOptionsBuilder<WarningSentenceContext>();
         optionsBuilder.UseSqlServer(connectionString);
