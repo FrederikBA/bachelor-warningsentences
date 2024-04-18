@@ -109,4 +109,29 @@ public class WarningSentenceUnitTests
         Assert.NotNull(result);
         Assert.Equal(testWarningSentence.Id, result.Id);
     }
+    
+    [Fact]
+    public async Task CloneWarningSentenceAsync_ReturnsWarningSentence()
+    {
+        //Arrange
+        var testWarningSentence = WarningSentenceTestHelper.GetTestWarningSentences().First();
+        var testWarningSentences = new List<WarningSentence>{testWarningSentence};
+        var idsToClone = new List<int> {testWarningSentence.Id};
+
+        _warningSentenceReadRepositoryMock.Setup(x =>
+                x.ListAsync(new CancellationToken()))
+            .ReturnsAsync(new List<WarningSentence>{testWarningSentence});
+
+        _warningSentenceRepositoryMock.Setup(x =>
+                x.AddRangeAsync(It.IsAny<List<WarningSentence>>(), new CancellationToken()))
+            .ReturnsAsync(testWarningSentences);
+
+        //Act
+        var result = await _warningSentenceService.CloneWarningSentenceAsync(idsToClone);
+        var warningSentences = result.ToList();
+        
+        //Assert
+        Assert.NotNull(result);
+        Assert.Equal(1, warningSentences.Count());
+    }
 }
