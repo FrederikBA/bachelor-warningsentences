@@ -53,4 +53,41 @@ public class WarningSentenceUnitTests
         //Assert
         Assert.NotNull(exception);
     }
+    
+    [Fact]
+    public async Task GetWarningSentenceByIdAsync_ReturnsWarningSentence()
+    {
+        //Arrange
+        var testWarningSentences = WarningSentenceTestHelper.GetTestWarningSentences();
+        var testWarningSentence = testWarningSentences.First();
+
+        _warningSentenceReadRepositoryMock.Setup(x =>
+                x.FirstOrDefaultAsync(It.IsAny<Specification<WarningSentence>>(), new CancellationToken()))
+            .ReturnsAsync(testWarningSentence);
+
+        //Act
+        var result = await _warningSentenceService.GetWarningSentenceByIdAsync(testWarningSentence.Id);
+
+        //Assert
+        Assert.NotNull(result);
+        Assert.Equal(testWarningSentence.Id, result.Id);
+    }
+    
+    [Fact]
+    public async Task GetWarningSentenceByIdAsync_ThrowsWarningSentenceNotFoundException()
+    {
+        //Arrange
+        var testWarningSentences = WarningSentenceTestHelper.GetTestWarningSentences();
+        const int fakeId = 99;
+        
+        _warningSentenceReadRepositoryMock.Setup(x =>
+                x.ListAsync(It.IsAny<ISpecification<WarningSentence>>(), new CancellationToken()))
+            .ReturnsAsync(testWarningSentences);
+
+        //Act
+        var exception = await Assert.ThrowsAsync<WarningSentenceNotFoundException>(() => _warningSentenceService.GetWarningSentenceByIdAsync(fakeId));
+
+        //Assert
+        Assert.NotNull(exception);
+    }
 }

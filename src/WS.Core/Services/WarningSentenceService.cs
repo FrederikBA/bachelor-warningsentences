@@ -28,4 +28,17 @@ public class WarningSentenceService : IWarningSentenceService
 
         return warningSentences;
     }
+
+    public async Task<WarningSentence> GetWarningSentenceByIdAsync(int id)
+    {
+        var warningSentence =
+            await _warningSentenceReadRepository.FirstOrDefaultAsync(new GetWarningSentenceByIdFullSpec(id));
+
+        if (warningSentence == null)
+        {
+            throw new WarningSentenceNotFoundException(id);
+        }
+
+        return warningSentence;
+    }
 }

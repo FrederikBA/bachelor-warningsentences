@@ -23,4 +23,11 @@ public class WarningSentenceController : ControllerBase
         var warningSentences = await _warningSentenceViewModelService.GetWarningSentenceViewModelsAsync();
         return Ok(warningSentences);
     }
+    
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetWarningSentence(int id)
+    {
+        var warningSentence = await _warningSentenceViewModelService.GetWarningSentenceViewModel(id);
+        return Ok(warningSentence);
+    }
 }
