@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Shared.Integration.Configuration;
+using WS.Core.Interfaces.DomainServices;
 using WS.Core.Interfaces.Repositories;
+using WS.Core.Services;
 using WS.Infrastructure.Data;
 
 const string policyName = "AllowOrigin";
@@ -39,7 +41,7 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
 
 
 //Build services
-// builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IWarningSentenceService, WarningSentenceService>();
 
 // builder.Services.AddScoped<IProductViewModelService, ProductViewModelService>();
 
