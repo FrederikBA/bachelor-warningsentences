@@ -90,4 +90,23 @@ public class WarningSentenceUnitTests
         //Assert
         Assert.NotNull(exception);
     }
+    
+    [Fact]
+    public async Task AddWarningSentenceAsync_ReturnsWarningSentence()
+    {
+        //Arrange
+        var testWarningSentenceDto = WarningSentenceTestHelper.GetTestWarningSentenceDto();
+        var testWarningSentence = WarningSentenceTestHelper.GetTestWarningSentences().First();
+
+        _warningSentenceRepositoryMock.Setup(x =>
+                x.AddAsync(It.IsAny<WarningSentence>(), new CancellationToken()))
+            .ReturnsAsync(testWarningSentence);
+
+        //Act
+        var result = await _warningSentenceService.AddWarningSentenceAsync(testWarningSentenceDto);
+
+        //Assert
+        Assert.NotNull(result);
+        Assert.Equal(testWarningSentence.Id, result.Id);
+    }
 }
