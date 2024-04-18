@@ -57,8 +57,38 @@ public class WarningSentenceService : IWarningSentenceService
         return _warningSentenceRepository.AddAsync(warningSentence);
     }
 
-    public Task<IEnumerable<WarningSentence>> CloneWarningSentenceAsync(List<int> ids)
+    public async Task<IEnumerable<WarningSentence>> CloneWarningSentenceAsync(List<int> ids)
     {
-        throw new NotImplementedException();
+        //Get the warning sentence that needs to be cloned
+        var warningSentences = await _warningSentenceReadRepository.ListAsync();
+
+        //Filter the warning sentences that needs to be cloned (ids)
+        warningSentences = warningSentences.Where(w => ids.Contains(w.Id)).ToList();
+
+        if (warningSentences == null || warningSentences.Count == 0)
+        {
+            throw new WarningSentencesNotFoundException();
+        }
+        
+        var clonedWarningSentences = new List<WarningSentence>();
+
+        foreach (var warningSentence in warningSentences)
+        {
+            //Clone the warning sentence
+            var clonedWarningSentence = new WarningSentence
+            {
+                Code = warningSentence.Code + " (Copy)", //Affix (Copy) to the code to indicate that it is a copy
+                Text = warningSentence.Text,
+                WarningCategoryId = warningSentence.WarningCategoryId,
+                WarningSignalWordId = warningSentence.WarningSignalWordId,
+                WarningPictogramId = warningSentence.WarningPictogramId
+            };
+            
+            //Add the cloned warning sentence to the list
+            clonedWarningSentences.Add(clonedWarningSentence);
+        }
+
+
+        return await _warningSentenceRepository.AddRangeAsync(clonedWarningSentences);
     }
 }
