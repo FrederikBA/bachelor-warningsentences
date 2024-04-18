@@ -91,4 +91,9 @@ public class WarningSentenceService : IWarningSentenceService
 
         return await _warningSentenceRepository.AddRangeAsync(clonedWarningSentences);
     }
+
+    public Task<WarningSentence> UpdateWarningSentenceAsync(int id, WarningSentenceDto warningSentenceDto)
+    {
+        throw new NotImplementedException();
+    }
 }
