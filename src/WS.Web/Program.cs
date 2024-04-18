@@ -30,7 +30,7 @@ builder.Services.AddCors(options =>
 //DBContext
 builder.Services.AddDbContext<WarningSentenceContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DbContext"));
+    options.UseSqlServer(Constants.ConnectionStrings.ShwWarningSentences);
 });
 
 //Build repositories
@@ -44,7 +44,7 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
 // builder.Services.AddScoped<IProductViewModelService, ProductViewModelService>();
 
 //JWT Key
-var key = Encoding.UTF8.GetBytes(Constants.JwtKey);
+var key = Encoding.UTF8.GetBytes(Constants.Authorization.JwtKey);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
