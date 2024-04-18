@@ -29,8 +29,16 @@ public class WarningSentenceService : IWarningSentenceService
         return warningSentences;
     }
 
-    public Task<WarningSentence> GetWarningSentenceByIdAsync(int id)
+    public async Task<WarningSentence> GetWarningSentenceByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        var warningSentence =
+            await _warningSentenceReadRepository.FirstOrDefaultAsync(new GetWarningSentenceByIdFullSpec(id));
+
+        if (warningSentence == null)
+        {
+            throw new WarningSentenceNotFoundException(id);
+        }
+
+        return warningSentence;
     }
 }
