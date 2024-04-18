@@ -4,6 +4,7 @@ using WS.Core.Entities.WSAggregate;
 using WS.Core.Exceptions;
 using WS.Core.Interfaces.DomainServices;
 using WS.Core.Interfaces.Repositories;
+using WS.Core.Models.Dtos;
 using WS.Core.Services;
 using WS.Test.Helpers;
 
@@ -132,6 +133,55 @@ public class WarningSentenceUnitTests
         
         //Assert
         Assert.NotNull(result);
-        Assert.Equal(1, warningSentences.Count());
+        Assert.Single(warningSentences);
+    }
+    
+    [Fact]
+    public async Task CloneWarningSentenceAsync_ThrowsWarningSentenceNotFoundException()
+    {
+        //Arrange
+        _warningSentenceReadRepositoryMock.Setup(x =>
+                x.ListAsync(new CancellationToken()))
+            .ReturnsAsync(new List<WarningSentence>{});
+    
+        //Act
+        var exception = await Assert.ThrowsAsync<WarningSentencesNotFoundException>(() => _warningSentenceService.CloneWarningSentenceAsync(new List<int>{0}));
+    
+        //Assert
+        Assert.NotNull(exception);
+    }
+    
+    [Fact]
+    public async Task UpdateWarningSentenceAsync_ShouldReturnWarningSentence()
+    {
+        //Arrange
+        var testWarningSentence = WarningSentenceTestHelper.GetTestWarningSentences().First();
+        var testWarningSentenceDto = WarningSentenceTestHelper.GetTestWarningSentenceDto();
+        
+        _warningSentenceReadRepositoryMock.Setup(x =>
+                x.GetByIdAsync(testWarningSentence.Id, new CancellationToken()))
+            .ReturnsAsync(testWarningSentence);
+
+        //Act
+        var result = await _warningSentenceService.UpdateWarningSentenceAsync(testWarningSentence.Id, testWarningSentenceDto);
+
+        //Assert
+        Assert.NotNull(result);
+        Assert.Equal(testWarningSentence.Id, result.Id);
+    }
+    
+    [Fact]
+    public async Task UpdateWarningSentenceAsync_ShouldThrowWarningSentenceNotFoundException()
+    {
+        //Arrange
+        _warningSentenceReadRepositoryMock.Setup(x =>
+                x.GetByIdAsync(0, new CancellationToken()))
+            .ReturnsAsync((WarningSentence)null!);
+
+        //Act
+        var exception = await Assert.ThrowsAsync<WarningSentenceNotFoundException>(() => _warningSentenceService.UpdateWarningSentenceAsync(0, new WarningSentenceDto()));
+
+        //Assert
+        Assert.NotNull(exception);
     }
 }
