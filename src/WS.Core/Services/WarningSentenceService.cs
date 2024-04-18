@@ -45,6 +45,15 @@ public class WarningSentenceService : IWarningSentenceService
 
     public Task<WarningSentence> AddWarningSentenceAsync(WarningSentenceDto warningSentenceDto)
     {
-        throw new NotImplementedException();
+        var warningSentence = new WarningSentence
+        {
+            Code = warningSentenceDto.Code,
+            Text = warningSentenceDto.Text,
+            WarningCategoryId = warningSentenceDto.WarningCategoryId,
+            WarningSignalWordId = warningSentenceDto.WarningSignalWordId,
+            WarningPictogramId = warningSentenceDto.WarningPictogramId
+        };
+
+        return _warningSentenceRepository.AddAsync(warningSentence);
     }
 }
