@@ -23,4 +23,8 @@
         </PackageReference>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\WS.Core\WS.Core.csproj" />
+    </ItemGroup>
+
 </Project>
