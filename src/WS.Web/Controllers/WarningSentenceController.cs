@@ -38,4 +38,11 @@ public class WarningSentenceController : ControllerBase
         var warningSentence = await _warningSentenceService.AddWarningSentenceAsync(warningSentenceDto);
         return Ok(warningSentence);
     }
+    
+    [HttpPost("copy")]
+    public async Task<IActionResult> CopyWarningSentence(CopyWarningSentenceDto copyWarningSentenceDto)
+    {
+        var warningSentences = await _warningSentenceService.CloneWarningSentenceAsync(copyWarningSentenceDto.Ids);
+        return Ok(warningSentences);
+    }
 }
