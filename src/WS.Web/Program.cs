@@ -7,6 +7,8 @@ using WS.Core.Interfaces.DomainServices;
 using WS.Core.Interfaces.Repositories;
 using WS.Core.Services;
 using WS.Infrastructure.Data;
+using WS.Web.Interfaces;
+using WS.Web.Services;
 
 const string policyName = "AllowOrigin";
 
@@ -43,7 +45,7 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
 //Build services
 builder.Services.AddScoped<IWarningSentenceService, WarningSentenceService>();
 
-// builder.Services.AddScoped<IProductViewModelService, ProductViewModelService>();
+builder.Services.AddScoped<IWarningSentenceViewModelService, WarningSentenceViewModelService>();
 
 //JWT Key
 var key = Encoding.UTF8.GetBytes(Constants.Authorization.JwtKey);
