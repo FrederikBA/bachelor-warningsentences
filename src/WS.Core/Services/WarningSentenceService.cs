@@ -2,6 +2,7 @@ using WS.Core.Entities.WSAggregate;
 using WS.Core.Exceptions;
 using WS.Core.Interfaces.DomainServices;
 using WS.Core.Interfaces.Repositories;
+using WS.Core.Models.Dtos;
 using WS.Core.Specifications;
 
 namespace WS.Core.Services;
@@ -40,5 +41,10 @@ public class WarningSentenceService : IWarningSentenceService
         }
 
         return warningSentence;
+    }
+
+    public Task<WarningSentence> AddWarningSentenceAsync(WarningSentenceDto warningSentenceDto)
+    {
+        throw new NotImplementedException();
     }
 }
