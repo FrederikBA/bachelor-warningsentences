@@ -6,7 +6,7 @@ namespace WS.Web.Controllers.IntegrationControllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Policy = "IntegrationPolicy")]
+[Authorize(Roles = "IntegrationPolicy")]
 public class WarningSentenceIntegrationController : ControllerBase
 {
     private readonly IWarningSentenceViewModelService _warningSentenceViewModelService;

@@ -64,12 +64,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy(Config.Policies.RequireShippingCompanyAdminRole, policy => policy.RequireRole(Config.Roles.ShippingCompanyAdmin));
-    options.AddPolicy(Config.Policies.RequireKemiDbUserRole, policy => policy.RequireRole(Config.Roles.KemiDbUser));
-    options.AddPolicy(Config.Policies.RequireSuperAdminRole, policy => policy.RequireRole(Config.Roles.SuperAdmin));
-
-    options.AddPolicy(Config.Policies.IntegrationPolicy, policy =>
-        policy.RequireClaim(Config.Claims.IntegrationClaim, Config.Claims.IntegrationClaim));
+    options.AddPolicy(Config.Authorization.Policies.RequireShippingCompanyAdminRole, policy => policy.RequireRole(Config.Authorization.Roles.ShippingCompanyAdmin));
+    options.AddPolicy(Config.Authorization.Policies.RequireKemiDbUserRole, policy => policy.RequireRole(Config.Authorization.Roles.KemiDbUser));
+    options.AddPolicy(Config.Authorization.Policies.RequireSuperAdminRole, policy => policy.RequireRole(Config.Authorization.Roles.SuperAdmin));
+    options.AddPolicy(Config.Authorization.Policies.RequireIntegrationPolicy, policy => policy.RequireRole(Config.Authorization.Roles.IntegrationPolicy));
 });
 
 var app = builder.Build();
