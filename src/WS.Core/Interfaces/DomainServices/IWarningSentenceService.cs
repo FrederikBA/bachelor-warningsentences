@@ -9,4 +9,5 @@ public interface IWarningSentenceService
     Task<WarningSentence> GetWarningSentenceByIdAsync(int id);
     Task<WarningSentence> AddWarningSentenceAsync(WarningSentenceDto warningSentenceDto);
     Task<IEnumerable<WarningSentence>> CloneWarningSentenceAsync(List<int> ids);
+    Task<WarningSentence> UpdateWarningSentenceAsync(int id, WarningSentenceDto warningSentenceDto);
 }

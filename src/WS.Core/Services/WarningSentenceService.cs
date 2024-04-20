@@ -91,4 +91,25 @@ public class WarningSentenceService : IWarningSentenceService
 
         return await _warningSentenceRepository.AddRangeAsync(clonedWarningSentences);
     }
+
+    public async Task<WarningSentence> UpdateWarningSentenceAsync(int id, WarningSentenceDto warningSentenceDto)
+    {
+        var warningSentence = await _warningSentenceReadRepository.GetByIdAsync(id);
+        
+        if (warningSentence == null)
+        {
+            throw new WarningSentenceNotFoundException(id);
+        }
+        
+        //Update the warning sentence
+        warningSentence.Code = warningSentenceDto.Code;
+        warningSentence.Text = warningSentenceDto.Text;
+        warningSentence.WarningCategoryId = warningSentenceDto.WarningCategoryId;
+        warningSentence.WarningSignalWordId = warningSentenceDto.WarningSignalWordId;
+        warningSentence.WarningPictogramId = warningSentenceDto.WarningPictogramId;
+        
+        await _warningSentenceRepository.UpdateAsync(warningSentence);
+        
+        return warningSentence;
+    }
 }
