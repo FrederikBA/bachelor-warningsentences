@@ -5,7 +5,7 @@ using WS.Core.Interfaces.Repositories;
 using WS.Core.Models.Dtos;
 using WS.Core.Specifications;
 
-namespace WS.Core.Services;
+namespace WS.Core.Services.DomainServices;
 
 public class WarningSentenceService : IWarningSentenceService
 {

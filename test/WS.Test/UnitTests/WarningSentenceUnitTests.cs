@@ -6,6 +6,7 @@ using WS.Core.Interfaces.DomainServices;
 using WS.Core.Interfaces.Repositories;
 using WS.Core.Models.Dtos;
 using WS.Core.Services;
+using WS.Core.Services.DomainServices;
 using WS.Test.Helpers;
 
 namespace WS.Test.UnitTests;
