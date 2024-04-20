@@ -5,7 +5,8 @@ using Microsoft.IdentityModel.Tokens;
 using Shared.Integration.Configuration;
 using WS.Core.Interfaces.DomainServices;
 using WS.Core.Interfaces.Repositories;
-using WS.Core.Services;
+using WS.Core.Services.DomainServices;
+using WS.Core.Services.IntegrationServices;
 using WS.Infrastructure.Data;
 using WS.Web.Interfaces;
 using WS.Web.Services;
@@ -44,6 +45,8 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
 
 //Build services
 builder.Services.AddScoped<IWarningSentenceService, WarningSentenceService>();
+
+builder.Services.AddScoped<IWarningSentenceIntegrationService, WarningSentenceIntegrationService>();
 
 builder.Services.AddScoped<IWarningSentenceViewModelService, WarningSentenceViewModelService>();
 
