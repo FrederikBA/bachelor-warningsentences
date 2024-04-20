@@ -34,7 +34,7 @@ builder.Services.AddCors(options =>
 //DBContext
 builder.Services.AddDbContext<WarningSentenceContext>(options =>
 {
-    options.UseSqlServer(Constants.ConnectionStrings.ShwWarningSentences);
+    options.UseSqlServer(Config.ConnectionStrings.ShwWarningSentences);
 });
 
 //Build repositories
@@ -48,7 +48,7 @@ builder.Services.AddScoped<IWarningSentenceService, WarningSentenceService>();
 builder.Services.AddScoped<IWarningSentenceViewModelService, WarningSentenceViewModelService>();
 
 //JWT Key
-var key = Encoding.UTF8.GetBytes(Constants.Authorization.JwtKey);
+var key = Encoding.UTF8.GetBytes(Config.Authorization.JwtKey);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -64,12 +64,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("RequireShippingCompanyAdminRole", policy => policy.RequireRole("ShippingCompanyAdmin"));
-    options.AddPolicy("RequireKemiDbUserRole", policy => policy.RequireRole("KemiDbUser"));
-    options.AddPolicy("RequireSuperAdminRole", policy => policy.RequireRole("SuperAdmin"));
+    options.AddPolicy(Config.Policies.RequireShippingCompanyAdminRole, policy => policy.RequireRole(Config.Roles.ShippingCompanyAdmin));
+    options.AddPolicy(Config.Policies.RequireKemiDbUserRole, policy => policy.RequireRole(Config.Roles.KemiDbUser));
+    options.AddPolicy(Config.Policies.RequireSuperAdminRole, policy => policy.RequireRole(Config.Roles.SuperAdmin));
 
-    options.AddPolicy("IntegrationPolicy", policy =>
-        policy.RequireClaim("service_integration_policy", "service_integration_policy"));
+    options.AddPolicy(Config.Policies.IntegrationPolicy, policy =>
+        policy.RequireClaim(Config.Claims.IntegrationClaim, Config.Claims.IntegrationClaim));
 });
 
 var app = builder.Build();

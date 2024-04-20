@@ -8,7 +8,7 @@ public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<WarningSen
 {
     public WarningSentenceContext CreateDbContext(string[] args)
     {
-        const string connectionString = Constants.ConnectionStrings.ShwWarningSentences; 
+        const string connectionString = Config.ConnectionStrings.ShwWarningSentences; 
         
         var optionsBuilder = new DbContextOptionsBuilder<WarningSentenceContext>();
         optionsBuilder.UseSqlServer(connectionString);
