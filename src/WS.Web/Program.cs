@@ -67,6 +67,9 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("RequireShippingCompanyAdminRole", policy => policy.RequireRole("ShippingCompanyAdmin"));
     options.AddPolicy("RequireKemiDbUserRole", policy => policy.RequireRole("KemiDbUser"));
     options.AddPolicy("RequireSuperAdminRole", policy => policy.RequireRole("SuperAdmin"));
+
+    options.AddPolicy("IntegrationPolicy", policy =>
+        policy.RequireClaim("service_integration_policy", "service_integration_policy"));
 });
 
 var app = builder.Build();
