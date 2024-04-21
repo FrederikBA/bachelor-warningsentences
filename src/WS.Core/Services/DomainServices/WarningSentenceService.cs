@@ -1,3 +1,7 @@
+using System.Text.Json;
+using Shared.Integration.Authorization;
+using Shared.Integration.Configuration;
+using Shared.Integration.Models.Dtos;
 using WS.Core.Entities.WSAggregate;
 using WS.Core.Exceptions;
 using WS.Core.Interfaces.DomainServices;
@@ -11,11 +15,17 @@ public class WarningSentenceService : IWarningSentenceService
 {
     private readonly IReadRepository<WarningSentence> _warningSentenceReadRepository;
     private readonly IRepository<WarningSentence> _warningSentenceRepository;
+    private readonly HttpClient _httpClient;
 
-    public WarningSentenceService(IReadRepository<WarningSentence> warningSentenceReadRepository, IRepository<WarningSentence> warningSentenceRepository)
+    public WarningSentenceService(IReadRepository<WarningSentence> warningSentenceReadRepository,
+        IRepository<WarningSentence> warningSentenceRepository)
     {
         _warningSentenceReadRepository = warningSentenceReadRepository;
         _warningSentenceRepository = warningSentenceRepository;
+
+        _httpClient = new HttpClient();
+        _httpClient.DefaultRequestHeaders.Add("Authorization",
+            "Bearer " + IntegrationAuthService.GetIntegrationToken());
     }
 
     public async Task<List<WarningSentence>> GetAllWarningSentencesAsync()
@@ -69,7 +79,7 @@ public class WarningSentenceService : IWarningSentenceService
         {
             throw new WarningSentencesNotFoundException();
         }
-        
+
         var clonedWarningSentences = new List<WarningSentence>();
 
         foreach (var warningSentence in warningSentences)
@@ -83,7 +93,7 @@ public class WarningSentenceService : IWarningSentenceService
                 WarningSignalWordId = warningSentence.WarningSignalWordId,
                 WarningPictogramId = warningSentence.WarningPictogramId
             };
-            
+
             //Add the cloned warning sentence to the list
             clonedWarningSentences.Add(clonedWarningSentence);
         }
@@ -95,21 +105,46 @@ public class WarningSentenceService : IWarningSentenceService
     public async Task<WarningSentence> UpdateWarningSentenceAsync(int id, WarningSentenceDto warningSentenceDto)
     {
         var warningSentence = await _warningSentenceReadRepository.GetByIdAsync(id);
-        
+
         if (warningSentence == null)
         {
             throw new WarningSentenceNotFoundException(id);
         }
-        
+
         //Update the warning sentence
         warningSentence.Code = warningSentenceDto.Code;
         warningSentence.Text = warningSentenceDto.Text;
         warningSentence.WarningCategoryId = warningSentenceDto.WarningCategoryId;
         warningSentence.WarningSignalWordId = warningSentenceDto.WarningSignalWordId;
         warningSentence.WarningPictogramId = warningSentenceDto.WarningPictogramId;
-        
+
         await _warningSentenceRepository.UpdateAsync(warningSentence);
-        
+
+        return warningSentence;
+    }
+
+    public async Task<WarningSentence> DeleteWarningSentenceAsync(int id)
+    {
+        var response = await _httpClient.GetAsync(Config.IntegrationEndpoints.ActiveWarningSentencesIntegration);
+        var content = await response.Content.ReadAsStringAsync();
+        var activeWarningSentences = JsonSerializer.Deserialize<SharedProductWsDto>(content);
+
+        //Check if given warning sentence is in use
+        var itemInUse = activeWarningSentences!.WarningSentenceIds.Contains(id);
+
+        //Throw exception if warning sentence is in use
+        if (itemInUse) throw new WarningSentenceIsInUseException(id);
+
+        //Delete the warning sentence
+        var warningSentence = await _warningSentenceReadRepository.GetByIdAsync(id);
+
+        if (warningSentence == null)
+        {
+            throw new WarningSentenceNotFoundException(id);
+        }
+
+        await _warningSentenceRepository.DeleteAsync(warningSentence);
+
         return warningSentence;
     }
 }
