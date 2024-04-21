@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Shared.Integration.Configuration;
 using WS.Core.Interfaces.DomainServices;
+using WS.Core.Interfaces.IntegrationServices;
 using WS.Core.Interfaces.Repositories;
 using WS.Core.Services.DomainServices;
 using WS.Core.Services.IntegrationServices;
