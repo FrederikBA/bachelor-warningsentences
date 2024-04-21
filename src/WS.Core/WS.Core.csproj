@@ -9,7 +9,7 @@
     <ItemGroup>
       <PackageReference Include="Ardalis.Specification" Version="7.0.0" />
       <PackageReference Include="Ardalis.Specification.EntityFrameworkCore" Version="7.0.0" />
-      <PackageReference Include="Fra.SharedLibrary" Version="8.0.14" />
+      <PackageReference Include="Fra.SharedLibrary" Version="8.0.15" />
       <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.5.0" />
       <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
       <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
