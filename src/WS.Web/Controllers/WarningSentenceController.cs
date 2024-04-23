@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using Shared.Integration.Authorization.Attributes;
+using Shared.Integration.Configuration;
 using WS.Core.Interfaces.DomainServices;
 using WS.Core.Models.Dtos;
 using WS.Web.Interfaces;
@@ -7,6 +9,7 @@ namespace WS.Web.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[AuthorizeRoles(Config.Authorization.Roles.KemiDbUser, Config.Authorization.Roles.SuperAdmin)]
 public class WarningSentenceController : ControllerBase
 {
     private readonly IWarningSentenceViewModelService _warningSentenceViewModelService;
