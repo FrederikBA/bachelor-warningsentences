@@ -1,3 +1,4 @@
+using System.Data.Common;
 using System.Text.Json;
 using Shared.Integration.Authorization;
 using Shared.Integration.Configuration;
@@ -5,6 +6,7 @@ using Shared.Integration.Models.Dtos;
 using WS.Core.Entities.WSAggregate;
 using WS.Core.Exceptions;
 using WS.Core.Interfaces.DomainServices;
+using WS.Core.Interfaces.IntegrationServices;
 using WS.Core.Interfaces.Repositories;
 using WS.Core.Models.Dtos;
 using WS.Core.Specifications;
@@ -15,13 +17,15 @@ public class WarningSentenceService : IWarningSentenceService
 {
     private readonly IReadRepository<WarningSentence> _warningSentenceReadRepository;
     private readonly IRepository<WarningSentence> _warningSentenceRepository;
+    private readonly IKafkaProducer _kafkaProducer;
     private readonly HttpClient _httpClient;
 
     public WarningSentenceService(IReadRepository<WarningSentence> warningSentenceReadRepository,
-        IRepository<WarningSentence> warningSentenceRepository)
+        IRepository<WarningSentence> warningSentenceRepository, IKafkaProducer kafkaProducer)
     {
         _warningSentenceReadRepository = warningSentenceReadRepository;
         _warningSentenceRepository = warningSentenceRepository;
+        _kafkaProducer = kafkaProducer;
 
         _httpClient = new HttpClient();
         _httpClient.DefaultRequestHeaders.Add("Authorization",
@@ -53,7 +57,7 @@ public class WarningSentenceService : IWarningSentenceService
         return warningSentence;
     }
 
-    public Task<WarningSentence> AddWarningSentenceAsync(WarningSentenceDto warningSentenceDto)
+    public async Task<WarningSentence> AddWarningSentenceAsync(WarningSentenceDto warningSentenceDto)
     {
         var warningSentence = new WarningSentence
         {
@@ -64,7 +68,12 @@ public class WarningSentenceService : IWarningSentenceService
             WarningPictogramId = warningSentenceDto.WarningPictogramId
         };
 
-        return _warningSentenceRepository.AddAsync(warningSentence);
+        await _warningSentenceRepository.AddAsync(warningSentence);
+        
+        //Sync warning sentence with SEA
+        await _kafkaProducer.ProduceAsync("test-topic", warningSentence);  
+        
+        return warningSentence;
     }
 
     public async Task<IEnumerable<WarningSentence>> CloneWarningSentenceAsync(List<int> ids)
