@@ -134,7 +134,7 @@ public class WarningSentenceService : IWarningSentenceService
 
         await _warningSentenceRepository.UpdateAsync(warningSentence);
 
-        //Sync warning sentence with SEA database
+        //Sync warning sentence with SEA database on update
         await _syncProducer.ProduceAsync(Config.Kafka.Topics.SyncUpdateWs, warningSentence);
         
         return warningSentence;
