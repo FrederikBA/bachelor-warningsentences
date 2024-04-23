@@ -12,6 +12,7 @@ public static class WarningSentenceTestHelper
             new WarningSentence
             {
                 Id = 1,
+                Code = "TestCode",
                 Text = "Test Warning Sentence 1",
                 WarningCategory = GetTestWarningCategory(),
                 WarningSignalWord = GetTestWarningSignalWord(),

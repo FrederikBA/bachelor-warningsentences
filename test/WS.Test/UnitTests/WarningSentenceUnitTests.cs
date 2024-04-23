@@ -120,7 +120,7 @@ public class WarningSentenceUnitTests
 
         //Assert
         Assert.NotNull(result);
-        Assert.Equal(testWarningSentence.Id, result.Id);
+        Assert.Equal(testWarningSentence.Code, result.Code);
     }
 
     [Fact]
