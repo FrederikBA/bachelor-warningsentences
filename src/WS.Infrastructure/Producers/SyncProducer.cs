@@ -1,17 +1,17 @@
 using System.Text.Json;
 using Confluent.Kafka;
 using WS.Core.Interfaces.Integration;
+using Config = Shared.Integration.Configuration.Config;
 
 namespace WS.Infrastructure.Producers;
 
 public class SyncProducer : ISyncProducer
 {
     private readonly IProducer<string, string> _producer;
-    private const string BootstrapServers = "localhost:9092";
 
     public SyncProducer()
     {
-        var config = new ProducerConfig { BootstrapServers = BootstrapServers };
+        var config = new ProducerConfig { BootstrapServers = Config.Kafka.BootstrapServers};
         _producer = new ProducerBuilder<string, string>(config).Build();
     }
     

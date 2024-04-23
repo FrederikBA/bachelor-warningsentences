@@ -70,7 +70,7 @@ public class WarningSentenceService : IWarningSentenceService
         var result = await _warningSentenceRepository.AddAsync(warningSentence);
 
         //Sync warning sentence with SEA database
-        await _syncProducer.ProduceAsync("sync-add-ws", result);
+        await _syncProducer.ProduceAsync(Config.Kafka.Topics.SyncAddWs, result);
 
         return result;
     }
@@ -111,7 +111,7 @@ public class WarningSentenceService : IWarningSentenceService
         var cloneWarningSentenceAsync = result.ToList();
 
         //Sync warning sentence with SEA database
-        await _syncProducer.ProduceAsync("sync-add-ws", cloneWarningSentenceAsync);
+        await _syncProducer.ProduceAsync(Config.Kafka.Topics.SyncAddWs, cloneWarningSentenceAsync);
 
         return cloneWarningSentenceAsync;
     }
@@ -135,7 +135,7 @@ public class WarningSentenceService : IWarningSentenceService
         await _warningSentenceRepository.UpdateAsync(warningSentence);
 
         //Sync warning sentence with SEA database
-        await _syncProducer.ProduceAsync("sync-update-ws", warningSentence);
+        await _syncProducer.ProduceAsync(Config.Kafka.Topics.SyncUpdateWs, warningSentence);
         
         return warningSentence;
     }
@@ -163,7 +163,7 @@ public class WarningSentenceService : IWarningSentenceService
         await _warningSentenceRepository.DeleteAsync(warningSentence);
         
         //Sync warning sentence with SEA database
-        await _syncProducer.ProduceAsync("sync-delete-ws", warningSentence);
+        await _syncProducer.ProduceAsync(Config.Kafka.Topics.SyncDeleteWs, warningSentence);
 
         return warningSentence;
     }
