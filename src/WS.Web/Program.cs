@@ -9,6 +9,7 @@ using WS.Core.Interfaces.Repositories;
 using WS.Core.Services.DomainServices;
 using WS.Core.Services.IntegrationServices;
 using WS.Infrastructure.Data;
+using WS.Infrastructure.Producers;
 using WS.Web.Interfaces;
 using WS.Web.Services;
 
@@ -42,6 +43,9 @@ builder.Services.AddDbContext<WarningSentenceContext>(options =>
 //Build repositories
 builder.Services.AddScoped(typeof(IReadRepository<>), typeof(EfReadRepository<>));
 builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
+
+//Build Kafka producers
+builder.Services.AddScoped<IKafkaProducer, SyncProducer>();
 
 
 //Build services
