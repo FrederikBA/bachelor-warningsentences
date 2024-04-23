@@ -45,7 +45,7 @@ builder.Services.AddScoped(typeof(IReadRepository<>), typeof(EfReadRepository<>)
 builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
 
 //Build Kafka producers
-builder.Services.AddScoped<IKafkaProducer, SyncProducer>();
+builder.Services.AddScoped<ISyncProducer, SyncProducer>();
 
 
 //Build services

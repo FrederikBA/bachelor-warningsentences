@@ -1,6 +1,6 @@
 namespace WS.Core.Interfaces.Integration;
 
-public interface IKafkaProducer : IDisposable
+public interface ISyncProducer : IDisposable
 {
     Task ProduceAsync<T>(string topic, T value);
 }

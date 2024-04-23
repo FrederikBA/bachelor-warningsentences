@@ -4,7 +4,7 @@ using WS.Core.Interfaces.Integration;
 
 namespace WS.Infrastructure.Producers;
 
-public class SyncProducer : IKafkaProducer
+public class SyncProducer : ISyncProducer
 {
     private readonly IProducer<string, string> _producer;
     private const string BootstrapServers = "localhost:9092";

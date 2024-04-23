@@ -17,7 +17,7 @@ public class WarningSentenceUnitTests
     private readonly IWarningSentenceService _warningSentenceService;
     private readonly Mock<IReadRepository<WarningSentence>> _warningSentenceReadRepositoryMock = new();
     private readonly Mock<IRepository<WarningSentence>> _warningSentenceRepositoryMock = new();
-    private readonly Mock<IKafkaProducer> _mockKafkaProducer = new();
+    private readonly Mock<ISyncProducer> _mockKafkaProducer = new();
 
     public WarningSentenceUnitTests()
     {

@@ -16,15 +16,15 @@ public class WarningSentenceService : IWarningSentenceService
 {
     private readonly IReadRepository<WarningSentence> _warningSentenceReadRepository;
     private readonly IRepository<WarningSentence> _warningSentenceRepository;
-    private readonly IKafkaProducer _kafkaProducer;
+    private readonly ISyncProducer _syncProducer;
     private readonly HttpClient _httpClient;
 
     public WarningSentenceService(IReadRepository<WarningSentence> warningSentenceReadRepository,
-        IRepository<WarningSentence> warningSentenceRepository, IKafkaProducer kafkaProducer)
+        IRepository<WarningSentence> warningSentenceRepository, ISyncProducer syncProducer)
     {
         _warningSentenceReadRepository = warningSentenceReadRepository;
         _warningSentenceRepository = warningSentenceRepository;
-        _kafkaProducer = kafkaProducer;
+        _syncProducer = syncProducer;
 
         _httpClient = new HttpClient();
         _httpClient.DefaultRequestHeaders.Add("Authorization",
@@ -70,7 +70,7 @@ public class WarningSentenceService : IWarningSentenceService
         var result = await _warningSentenceRepository.AddAsync(warningSentence);
 
         //Sync warning sentence with SEA database
-        await _kafkaProducer.ProduceAsync("sync-add-ws", result);
+        await _syncProducer.ProduceAsync("sync-add-ws", result);
 
         return result;
     }
@@ -111,7 +111,7 @@ public class WarningSentenceService : IWarningSentenceService
         var cloneWarningSentenceAsync = result.ToList();
 
         //Sync warning sentence with SEA database
-        await _kafkaProducer.ProduceAsync("sync-add-ws", cloneWarningSentenceAsync);
+        await _syncProducer.ProduceAsync("sync-add-ws", cloneWarningSentenceAsync);
 
         return cloneWarningSentenceAsync;
     }
@@ -135,7 +135,7 @@ public class WarningSentenceService : IWarningSentenceService
         await _warningSentenceRepository.UpdateAsync(warningSentence);
 
         //Sync warning sentence with SEA database
-        await _kafkaProducer.ProduceAsync("sync-update-ws", warningSentence);
+        await _syncProducer.ProduceAsync("sync-update-ws", warningSentence);
         
         return warningSentence;
     }
@@ -163,7 +163,7 @@ public class WarningSentenceService : IWarningSentenceService
         await _warningSentenceRepository.DeleteAsync(warningSentence);
         
         //Sync warning sentence with SEA database
-        await _kafkaProducer.ProduceAsync("sync-delete-ws", warningSentence);
+        await _syncProducer.ProduceAsync("sync-delete-ws", warningSentence);
 
         return warningSentence;
     }
