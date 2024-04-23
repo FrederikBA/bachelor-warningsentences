@@ -1,6 +1,6 @@
 using System.Text.Json;
 using Confluent.Kafka;
-using WS.Core.Interfaces.IntegrationServices;
+using WS.Core.Interfaces.Integration;
 
 namespace WS.Infrastructure.Producers;
 

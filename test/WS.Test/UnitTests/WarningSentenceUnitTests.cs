@@ -3,7 +3,7 @@ using Moq;
 using WS.Core.Entities.WSAggregate;
 using WS.Core.Exceptions;
 using WS.Core.Interfaces.DomainServices;
-using WS.Core.Interfaces.IntegrationServices;
+using WS.Core.Interfaces.Integration;
 using WS.Core.Interfaces.Repositories;
 using WS.Core.Models.Dtos;
 using WS.Core.Services;

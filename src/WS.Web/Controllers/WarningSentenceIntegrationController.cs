@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WS.Core.Interfaces.IntegrationServices;
+using WS.Core.Interfaces.Integration;
 
 namespace WS.Web.Controllers;
 

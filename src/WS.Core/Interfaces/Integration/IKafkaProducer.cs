@@ -1,4 +1,4 @@
-namespace WS.Core.Interfaces.IntegrationServices;
+namespace WS.Core.Interfaces.Integration;
 
 public interface IKafkaProducer : IDisposable
 {

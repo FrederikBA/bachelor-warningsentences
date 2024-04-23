@@ -1,6 +1,6 @@
 using Shared.Integration.Models.Dtos;
 
-namespace WS.Core.Interfaces.IntegrationServices;
+namespace WS.Core.Interfaces.Integration;
 
 public interface IWarningSentenceIntegrationService
 {
