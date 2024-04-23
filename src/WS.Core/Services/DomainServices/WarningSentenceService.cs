@@ -68,12 +68,12 @@ public class WarningSentenceService : IWarningSentenceService
             WarningPictogramId = warningSentenceDto.WarningPictogramId
         };
 
-        await _warningSentenceRepository.AddAsync(warningSentence);
-        
-        //Sync warning sentence with SEA
-        await _kafkaProducer.ProduceAsync("test-topic", warningSentence);  
-        
-        return warningSentence;
+        var result = await _warningSentenceRepository.AddAsync(warningSentence);
+
+        //Sync warning sentence with SEA database
+        await _kafkaProducer.ProduceAsync("sync-add-ws", result);
+
+        return result;
     }
 
     public async Task<IEnumerable<WarningSentence>> CloneWarningSentenceAsync(List<int> ids)
@@ -108,7 +108,13 @@ public class WarningSentenceService : IWarningSentenceService
         }
 
 
-        return await _warningSentenceRepository.AddRangeAsync(clonedWarningSentences);
+        var result = await _warningSentenceRepository.AddRangeAsync(clonedWarningSentences);
+        var cloneWarningSentenceAsync = result.ToList();
+
+        //Sync warning sentence with SEA database
+        await _kafkaProducer.ProduceAsync("sync-add-ws", cloneWarningSentenceAsync);
+
+        return cloneWarningSentenceAsync;
     }
 
     public async Task<WarningSentence> UpdateWarningSentenceAsync(int id, WarningSentenceDto warningSentenceDto)
@@ -129,6 +135,9 @@ public class WarningSentenceService : IWarningSentenceService
 
         await _warningSentenceRepository.UpdateAsync(warningSentence);
 
+        //Sync warning sentence with SEA database
+        await _kafkaProducer.ProduceAsync("sync-update-ws", warningSentence);
+        
         return warningSentence;
     }
 
@@ -153,6 +162,9 @@ public class WarningSentenceService : IWarningSentenceService
         }
 
         await _warningSentenceRepository.DeleteAsync(warningSentence);
+        
+        //Sync warning sentence with SEA database
+        await _kafkaProducer.ProduceAsync("sync-delete-ws", warningSentence);
 
         return warningSentence;
     }
