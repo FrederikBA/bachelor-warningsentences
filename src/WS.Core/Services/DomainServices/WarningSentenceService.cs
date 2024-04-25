@@ -79,7 +79,7 @@ public class WarningSentenceService : IWarningSentenceService
             new SyncWarningSentenceDto { WarningSentenceId = result.Id, Code = result.Code });
 
         _logger.LogInformation($"Syncing new warning sentence with SEA database. Id: {result.Id}, Code: {result.Code}");
-        
+
         return result;
     }
 
@@ -124,11 +124,10 @@ public class WarningSentenceService : IWarningSentenceService
             await _syncProducer.ProduceAsync(Config.Kafka.Topics.SyncAddWs,
                 new SyncWarningSentenceDto
                     { WarningSentenceId = ws.Id, Code = ws.Code });
-            
-            _logger.LogInformation($"Syncing new warning sentence with SEA database. Id: {ws.Id}, Code: {ws.Code}");
 
+            _logger.LogInformation($"Syncing new warning sentence with SEA database. Id: {ws.Id}, Code: {ws.Code}");
         }
-        
+
 
         return cloneWarningSentenceAsync;
     }
@@ -155,41 +154,49 @@ public class WarningSentenceService : IWarningSentenceService
         await _syncProducer.ProduceAsync(Config.Kafka.Topics.SyncUpdateWs,
             new SyncWarningSentenceDto { WarningSentenceId = warningSentence.Id, Code = warningSentence.Code });
 
-        _logger.LogInformation($"Syncing updated warning sentence with SEA database. Id: {warningSentence.Id}, Code: {warningSentence.Code}");
-        
+        _logger.LogInformation(
+            $"Syncing updated warning sentence with SEA database. Id: {warningSentence.Id}, Code: {warningSentence.Code}");
+
         return warningSentence;
     }
 
     public async Task<WarningSentence> DeleteWarningSentenceAsync(int id)
     {
-        var response = await _httpClient.GetAsync(Config.IntegrationEndpoints.ActiveWarningSentencesIntegration);
-        var content = await response.Content.ReadAsStringAsync();
-        var activeWarningSentences = JsonSerializer.Deserialize<SharedProductWsDto>(content);
+        try
+        {
+            var response = await _httpClient.GetAsync(Config.IntegrationEndpoints.ActiveWarningSentencesIntegration);
+            var content = await response.Content.ReadAsStringAsync();
+            var activeWarningSentences = JsonSerializer.Deserialize<SharedProductWsDto>(content);
 
-        //Check if given warning sentence is in use
-        var itemInUse = activeWarningSentences!.WarningSentenceIds.Contains(id);
+            //Check if given warning sentence is in use
+            var itemInUse = activeWarningSentences!.WarningSentenceIds.Contains(id);
 
-        //Throw exception if warning sentence is in use
-        if (itemInUse)
+            //Throw exception if warning sentence is in use
+            if (itemInUse)
+            {
+                throw new WarningSentenceIsInUseException(id);
+            }
+
+            //Delete the warning sentence
+            var warningSentence = await _warningSentenceReadRepository.GetByIdAsync(id);
+
+            if (warningSentence == null)
+            {
+                throw new WarningSentenceNotFoundException(id);
+            }
+
+            await _warningSentenceRepository.DeleteAsync(warningSentence);
+
+            //Sync warning sentence with SEA database
+            await _syncProducer.ProduceAsync(Config.Kafka.Topics.SyncDeleteWs,
+                new SyncWarningSentenceDto { WarningSentenceId = warningSentence.Id, Code = warningSentence.Code });
+
+            return warningSentence;
+        }
+        catch (Exception e)
         {
             _logger.LogError($"Warning sentence with id {id} is in use and cannot be deleted.");
-            throw new WarningSentenceIsInUseException(id);
+            throw;
         }
-
-        //Delete the warning sentence
-        var warningSentence = await _warningSentenceReadRepository.GetByIdAsync(id);
-
-        if (warningSentence == null)
-        {
-            throw new WarningSentenceNotFoundException(id);
-        }
-
-        await _warningSentenceRepository.DeleteAsync(warningSentence);
-
-        //Sync warning sentence with SEA database
-        await _syncProducer.ProduceAsync(Config.Kafka.Topics.SyncDeleteWs,
-            new SyncWarningSentenceDto { WarningSentenceId = warningSentence.Id, Code = warningSentence.Code });
-
-        return warningSentence;
     }
 }
