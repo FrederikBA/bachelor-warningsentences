@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 using Shared.Integration.Authorization;
 using Shared.Integration.Configuration;
 using Shared.Integration.Models.Dtos;
@@ -19,13 +20,16 @@ public class WarningSentenceService : IWarningSentenceService
     private readonly IRepository<WarningSentence> _warningSentenceRepository;
     private readonly ISyncProducer _syncProducer;
     private readonly HttpClient _httpClient;
+    private readonly ILogger<WarningSentenceService> _logger;
 
     public WarningSentenceService(IReadRepository<WarningSentence> warningSentenceReadRepository,
-        IRepository<WarningSentence> warningSentenceRepository, ISyncProducer syncProducer)
+        IRepository<WarningSentence> warningSentenceRepository, ISyncProducer syncProducer,
+        ILogger<WarningSentenceService> logger)
     {
         _warningSentenceReadRepository = warningSentenceReadRepository;
         _warningSentenceRepository = warningSentenceRepository;
         _syncProducer = syncProducer;
+        _logger = logger;
 
         _httpClient = new HttpClient();
         _httpClient.DefaultRequestHeaders.Add("Authorization",
@@ -74,6 +78,8 @@ public class WarningSentenceService : IWarningSentenceService
         await _syncProducer.ProduceAsync(Config.Kafka.Topics.SyncAddWs,
             new SyncWarningSentenceDto { WarningSentenceId = result.Id, Code = result.Code });
 
+        _logger.LogInformation($"Syncing new warning sentence with SEA database. Id: {result.Id}, Code: {result.Code}");
+        
         return result;
     }
 
@@ -118,7 +124,11 @@ public class WarningSentenceService : IWarningSentenceService
             await _syncProducer.ProduceAsync(Config.Kafka.Topics.SyncAddWs,
                 new SyncWarningSentenceDto
                     { WarningSentenceId = ws.Id, Code = ws.Code });
+            
+            _logger.LogInformation($"Syncing new warning sentence with SEA database. Id: {ws.Id}, Code: {ws.Code}");
+
         }
+        
 
         return cloneWarningSentenceAsync;
     }
@@ -145,6 +155,8 @@ public class WarningSentenceService : IWarningSentenceService
         await _syncProducer.ProduceAsync(Config.Kafka.Topics.SyncUpdateWs,
             new SyncWarningSentenceDto { WarningSentenceId = warningSentence.Id, Code = warningSentence.Code });
 
+        _logger.LogInformation($"Syncing updated warning sentence with SEA database. Id: {warningSentence.Id}, Code: {warningSentence.Code}");
+        
         return warningSentence;
     }
 
@@ -158,7 +170,11 @@ public class WarningSentenceService : IWarningSentenceService
         var itemInUse = activeWarningSentences!.WarningSentenceIds.Contains(id);
 
         //Throw exception if warning sentence is in use
-        if (itemInUse) throw new WarningSentenceIsInUseException(id);
+        if (itemInUse)
+        {
+            _logger.LogError($"Warning sentence with id {id} is in use and cannot be deleted.");
+            throw new WarningSentenceIsInUseException(id);
+        }
 
         //Delete the warning sentence
         var warningSentence = await _warningSentenceReadRepository.GetByIdAsync(id);
