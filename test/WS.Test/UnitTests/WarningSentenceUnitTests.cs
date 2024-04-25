@@ -1,4 +1,5 @@
 using Ardalis.Specification;
+using Microsoft.Extensions.Logging;
 using Moq;
 using WS.Core.Entities.WSAggregate;
 using WS.Core.Exceptions;
@@ -18,6 +19,7 @@ public class WarningSentenceUnitTests
     private readonly Mock<IReadRepository<WarningSentence>> _warningSentenceReadRepositoryMock = new();
     private readonly Mock<IRepository<WarningSentence>> _warningSentenceRepositoryMock = new();
     private readonly Mock<ISyncProducer> _mockKafkaProducer = new();
+    private readonly Mock<ILogger<WarningSentenceService>> _loggerMock = new();
 
     public WarningSentenceUnitTests()
     {
@@ -25,7 +27,8 @@ public class WarningSentenceUnitTests
         (
             _warningSentenceReadRepositoryMock.Object,
             _warningSentenceRepositoryMock.Object,
-            _mockKafkaProducer.Object
+            _mockKafkaProducer.Object,
+            _loggerMock.Object
         );
     }
 
