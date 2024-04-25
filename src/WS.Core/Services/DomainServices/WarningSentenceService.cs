@@ -2,6 +2,7 @@ using System.Text.Json;
 using Shared.Integration.Authorization;
 using Shared.Integration.Configuration;
 using Shared.Integration.Models.Dtos;
+using Shared.Integration.Models.Dtos.Sync;
 using WS.Core.Entities.WSAggregate;
 using WS.Core.Exceptions;
 using WS.Core.Interfaces.DomainServices;
@@ -70,7 +71,8 @@ public class WarningSentenceService : IWarningSentenceService
         var result = await _warningSentenceRepository.AddAsync(warningSentence);
 
         //Sync warning sentence with SEA database
-        await _syncProducer.ProduceAsync(Config.Kafka.Topics.SyncAddWs, result);
+        await _syncProducer.ProduceAsync(Config.Kafka.Topics.SyncAddWs,
+            new SyncWarningSentenceDto { WarningSentenceId = result.Id, Code = result.Code });
 
         return result;
     }
@@ -111,7 +113,12 @@ public class WarningSentenceService : IWarningSentenceService
         var cloneWarningSentenceAsync = result.ToList();
 
         //Sync warning sentence with SEA database
-        await _syncProducer.ProduceAsync(Config.Kafka.Topics.SyncAddWs, cloneWarningSentenceAsync);
+        foreach (var ws in cloneWarningSentenceAsync)
+        {
+            await _syncProducer.ProduceAsync(Config.Kafka.Topics.SyncAddWs,
+                new SyncWarningSentenceDto
+                    { WarningSentenceId = ws.Id, Code = ws.Code });
+        }
 
         return cloneWarningSentenceAsync;
     }
@@ -135,8 +142,9 @@ public class WarningSentenceService : IWarningSentenceService
         await _warningSentenceRepository.UpdateAsync(warningSentence);
 
         //Sync warning sentence with SEA database on update
-        await _syncProducer.ProduceAsync(Config.Kafka.Topics.SyncUpdateWs, warningSentence);
-        
+        await _syncProducer.ProduceAsync(Config.Kafka.Topics.SyncUpdateWs,
+            new SyncWarningSentenceDto { WarningSentenceId = warningSentence.Id, Code = warningSentence.Code });
+
         return warningSentence;
     }
 
@@ -161,9 +169,10 @@ public class WarningSentenceService : IWarningSentenceService
         }
 
         await _warningSentenceRepository.DeleteAsync(warningSentence);
-        
+
         //Sync warning sentence with SEA database
-        await _syncProducer.ProduceAsync(Config.Kafka.Topics.SyncDeleteWs, warningSentence);
+        await _syncProducer.ProduceAsync(Config.Kafka.Topics.SyncDeleteWs,
+            new SyncWarningSentenceDto { WarningSentenceId = warningSentence.Id, Code = warningSentence.Code });
 
         return warningSentence;
     }
