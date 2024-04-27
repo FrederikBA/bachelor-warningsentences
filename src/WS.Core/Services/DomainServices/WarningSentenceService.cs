@@ -19,21 +19,18 @@ public class WarningSentenceService : IWarningSentenceService
     private readonly IReadRepository<WarningSentence> _warningSentenceReadRepository;
     private readonly IRepository<WarningSentence> _warningSentenceRepository;
     private readonly ISyncProducer _syncProducer;
-    private readonly HttpClient _httpClient;
+    private readonly IProductHttpService _productHttpService;
     private readonly ILogger<WarningSentenceService> _logger;
 
     public WarningSentenceService(IReadRepository<WarningSentence> warningSentenceReadRepository,
         IRepository<WarningSentence> warningSentenceRepository, ISyncProducer syncProducer,
-        ILogger<WarningSentenceService> logger)
+        ILogger<WarningSentenceService> logger, IProductHttpService productHttpService)
     {
         _warningSentenceReadRepository = warningSentenceReadRepository;
         _warningSentenceRepository = warningSentenceRepository;
         _syncProducer = syncProducer;
         _logger = logger;
-
-        _httpClient = new HttpClient();
-        _httpClient.DefaultRequestHeaders.Add("Authorization",
-            "Bearer " + IntegrationAuthService.GetIntegrationToken());
+        _productHttpService = productHttpService;
     }
 
     public async Task<List<WarningSentence>> GetAllWarningSentencesAsync()
@@ -164,9 +161,7 @@ public class WarningSentenceService : IWarningSentenceService
     {
         try
         {
-            var response = await _httpClient.GetAsync(Config.IntegrationEndpoints.ActiveWarningSentencesIntegration);
-            var content = await response.Content.ReadAsStringAsync();
-            var activeWarningSentences = JsonSerializer.Deserialize<SharedProductWsDto>(content);
+            var activeWarningSentences = await _productHttpService.GetInUseWarningSentences();
 
             //Check if given warning sentence is in use
             var itemInUse = activeWarningSentences!.WarningSentenceIds.Contains(id);

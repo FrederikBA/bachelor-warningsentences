@@ -1,13 +1,13 @@
 using Ardalis.Specification;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Shared.Integration.Models.Dtos;
 using WS.Core.Entities.WSAggregate;
 using WS.Core.Exceptions;
 using WS.Core.Interfaces.DomainServices;
 using WS.Core.Interfaces.Integration;
 using WS.Core.Interfaces.Repositories;
 using WS.Core.Models.Dtos;
-using WS.Core.Services;
 using WS.Core.Services.DomainServices;
 using WS.Test.Helpers;
 
@@ -20,6 +20,7 @@ public class WarningSentenceUnitTests
     private readonly Mock<IRepository<WarningSentence>> _warningSentenceRepositoryMock = new();
     private readonly Mock<ISyncProducer> _mockKafkaProducer = new();
     private readonly Mock<ILogger<WarningSentenceService>> _loggerMock = new();
+    private readonly Mock<IProductHttpService> _productHttpServiceMock = new();
 
     public WarningSentenceUnitTests()
     {
@@ -28,7 +29,8 @@ public class WarningSentenceUnitTests
             _warningSentenceReadRepositoryMock.Object,
             _warningSentenceRepositoryMock.Object,
             _mockKafkaProducer.Object,
-            _loggerMock.Object
+            _loggerMock.Object,
+            _productHttpServiceMock.Object
         );
     }
 
@@ -198,6 +200,47 @@ public class WarningSentenceUnitTests
         //Act
         var exception = await Assert.ThrowsAsync<WarningSentenceNotFoundException>(() =>
             _warningSentenceService.UpdateWarningSentenceAsync(0, new WarningSentenceDto()));
+
+        //Assert
+        Assert.NotNull(exception);
+    }
+    
+    [Fact]
+    public async Task DeleteWarningSentenceAsync_ShouldReturnTrue()
+    {
+        //Arrange
+        var testWarningSentences = WarningSentenceTestHelper.GetTestWarningSentences();
+
+        _warningSentenceReadRepositoryMock.Setup(x =>
+                x.GetByIdAsync(testWarningSentences.First().Id, new CancellationToken()))
+            .ReturnsAsync(testWarningSentences.First());
+
+        _productHttpServiceMock.Setup(x => x.GetInUseWarningSentences())
+            .ReturnsAsync(new SharedProductWsDto { WarningSentenceIds = new List<int> { new() } });
+        
+        //Act
+        var result = await _warningSentenceService.DeleteWarningSentenceAsync(testWarningSentences.First().Id);
+
+        //Assert
+        Assert.NotNull(result);
+    }
+    
+    [Fact]
+    public async Task DeleteWarningSentenceAsync_ShouldThrowWarningSentenceInUseException()
+    {
+        //Arrange
+        var testWarningSentences = WarningSentenceTestHelper.GetTestWarningSentences();
+
+        _warningSentenceReadRepositoryMock.Setup(x =>
+                x.GetByIdAsync(testWarningSentences.First().Id, new CancellationToken()))
+            .ReturnsAsync(testWarningSentences.First());
+
+        _productHttpServiceMock.Setup(x => x.GetInUseWarningSentences())
+            .ReturnsAsync(new SharedProductWsDto { WarningSentenceIds = new List<int> { testWarningSentences.First().Id } });
+        
+        //Act
+        var exception = await Assert.ThrowsAsync<WarningSentenceIsInUseException>(() =>
+            _warningSentenceService.DeleteWarningSentenceAsync(testWarningSentences.First().Id));
 
         //Assert
         Assert.NotNull(exception);
