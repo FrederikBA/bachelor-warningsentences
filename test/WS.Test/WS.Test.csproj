@@ -10,6 +10,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Confluent.Kafka" Version="2.3.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.18" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0"/>
         <PackageReference Include="Moq" Version="4.20.70" />
         <PackageReference Include="xunit" Version="2.4.2"/>
@@ -25,6 +27,11 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\src\WS.Core\WS.Core.csproj" />
+      <ProjectReference Include="..\..\src\WS.Infrastructure\WS.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Tests\ApiTests\" />
     </ItemGroup>
 
 </Project>

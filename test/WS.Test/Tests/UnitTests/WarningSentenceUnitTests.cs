@@ -11,7 +11,7 @@ using WS.Core.Models.Dtos;
 using WS.Core.Services.DomainServices;
 using WS.Test.Helpers;
 
-namespace WS.Test.UnitTests;
+namespace WS.Test.Tests.UnitTests;
 
 public class WarningSentenceUnitTests
 {

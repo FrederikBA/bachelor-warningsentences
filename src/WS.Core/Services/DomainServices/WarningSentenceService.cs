@@ -1,8 +1,5 @@
-using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using Shared.Integration.Authorization;
 using Shared.Integration.Configuration;
-using Shared.Integration.Models.Dtos;
 using Shared.Integration.Models.Dtos.Sync;
 using WS.Core.Entities.WSAggregate;
 using WS.Core.Exceptions;
