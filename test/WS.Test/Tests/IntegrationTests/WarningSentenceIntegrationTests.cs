@@ -49,6 +49,10 @@ public class WarningSentenceIntegrationTests : IDisposable
 
         //Assert
         Assert.NotNull(result);
+        
+        //Check the in-memory database to see if the warning sentence was created
+        var ws = await _context.WarningSentences!.FirstOrDefaultAsync();
+        Assert.NotNull(ws);
     }
 
     [Fact]

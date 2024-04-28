@@ -58,6 +58,8 @@ builder.Services.AddScoped<IWarningSentenceIntegrationService, WarningSentenceIn
 
 builder.Services.AddScoped<IWarningSentenceViewModelService, WarningSentenceViewModelService>();
 
+builder.Services.AddScoped<IProductHttpService, ProductHttpService>();
+
 //JWT Key
 var key = Encoding.UTF8.GetBytes(Config.Authorization.JwtKey);
 
@@ -138,3 +140,7 @@ app.MapControllers();
 app.MapFallbackToFile("index.html");
 
 app.Run();
+
+public partial class Program
+{
+}
