@@ -11,11 +11,14 @@
 
     <ItemGroup>
         <PackageReference Include="Confluent.Kafka" Version="2.3.0" />
+        <PackageReference Include="FluentAssertions" Version="7.0.0-alpha.3" />
         <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.7" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.18" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.18" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0"/>
         <PackageReference Include="Moq" Version="4.20.70" />
+        <PackageReference Include="SpecFlow" Version="4.0.31-beta" />
+        <PackageReference Include="SpecFlow.xUnit" Version="4.0.31-beta" />
         <PackageReference Include="xunit" Version="2.4.2"/>
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

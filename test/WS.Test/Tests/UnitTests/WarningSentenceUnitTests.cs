@@ -38,6 +38,7 @@ public class WarningSentenceUnitTests
     public async Task GetWarningSentencesAsync_ReturnsListOfWarningSentences()
     {
         //Arrange
+        //Helper class, returns a list of warning sentences with 2 items
         var testWarningSentences = WarningSentenceTestHelper.GetTestWarningSentences();
 
         _warningSentenceReadRepositoryMock.Setup(x =>
