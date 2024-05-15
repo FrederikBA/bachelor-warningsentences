@@ -87,7 +87,6 @@ builder.Services.AddAuthorization(options =>
 
 //Serilog
 builder.Host.UseSerilog((ctx, lc) => lc
-    .WriteTo.Console()
     .Filter.ByExcluding(logEvent =>
         logEvent.Level == LogEventLevel.Warning &&
         logEvent.MessageTemplate.Text.Contains("XML"))
